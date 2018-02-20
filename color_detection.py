@@ -18,6 +18,7 @@ output = cv2.bitwise_and(image, image, mask=mask)
 # show the image
 cv2.imshow("image", np.hstack([image, output]))
 
+
 # open for 13 seconds and close
 cv2.waitKey(13000)
 cv2.destroyAllWindows()
