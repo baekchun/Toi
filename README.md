@@ -37,19 +37,11 @@ Baekchun Kim
 
 ### Week 1 - 2 (Due Feb. 20)
 
-1. Make sure pictures are analyzed properly -- computer vision stuff
+1. Use OpenCV and numpy to read stool image and color balance the image, emulating Photoshop's "auto levels" command
 
-1. Make sure pictures actually show poop
+1. Use OpenCV and numpy to produce a new stool image to mark the red pixels and mask the remaining non-red pixels
 
-1. Figure out detection
-
-1. Base case
-
-1. Color
-    1. Number of shapes
-    1. Size
-    1. Shape -- number of corners
-    1. Extended feature
+1. Compare the original image with the masked image
 
 ### Week 3 - 4 (Due Mar. 6)
 
