@@ -88,7 +88,7 @@ def detect_color(image):
     cv2.imshow("image", np.hstack([image, output]))
 
     # open window for 10 seconds and close
-    cv2.waitKey(7000)
+    cv2.waitKey(10000)
     cv2.destroyAllWindows()
 
 def main():
