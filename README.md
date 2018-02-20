@@ -37,9 +37,9 @@ Baekchun Kim
 
 ### Week 1 - 2 (Due Feb. 20)
 
-1. Use OpenCV and numpy to read stool image and color balance the image, emulating Photoshop's "auto levels" command
+1. Use python3, OpenCV and numpy to read stool image and color balance the image, emulating Photoshop's "auto levels" command
 
-1. Use OpenCV and numpy to produce a new stool image to mark the red pixels and mask the remaining non-red pixels
+1. Use python3, OpenCV and numpy to produce a new stool image to mark the red pixels and mask the remaining non-red pixels
 
 1. Compare the original image with the masked image
 
