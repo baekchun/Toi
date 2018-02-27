@@ -77,8 +77,8 @@ def detect_color(image):
 
     # set range of color RED
     # Note: numpy takes the values in the order of BGR, not RGB
-    lower = np.array([17, 15, 100], dtype = "uint8")
-    upper = np.array([50, 56, 200], dtype = "uint8")
+    lower = np.array([7, 5, 90], dtype = "uint8")
+    upper = np.array([60, 66, 210], dtype = "uint8")
 
     # mask the non-red parts of an image
     mask = cv2.inRange(image, lower, upper)
@@ -88,7 +88,7 @@ def detect_color(image):
     cv2.imshow("image", np.hstack([image, output]))
 
     # open window for 10 seconds and close
-    cv2.waitKey(10000)
+    cv2.waitKey(20000)
     cv2.destroyAllWindows()
 
 def main():
