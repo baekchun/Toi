@@ -83,12 +83,16 @@ def detect_color(image):
     # mask the non-red parts of an image
     mask = cv2.inRange(image, lower, upper)
     output = cv2.bitwise_and(image, image, mask=mask)
+    print (output.shape)
+
+    no_red = cv2.countNonZero(mask)
+    print('The number of red pixels is: ' + str(no_red))
 
     # display the image
     cv2.imshow("image", np.hstack([image, output]))
 
     # open window for 10 seconds and close
-    cv2.waitKey(20000)
+    cv2.waitKey(10000)
     cv2.destroyAllWindows()
 
 def main():
