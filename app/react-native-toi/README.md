@@ -6,13 +6,28 @@
 
 ![alt](../../screenshots/toi_login.gif)
 
-# Installation
+## Iteration 2
 
-## Try it out on your Device
+- signup, login, logout implemented
+- calendar implemented
+- drawer menu implemented
+
+### Homescreen implemented
+
+![alt](../../screenshots/toi_login.gif)
+
+### Drawer menu implemented
+
+![alt](../../screenshots/toi_login.gif)
+
+
+## Installation
+
+### Try it out on your Device
 
 Try it with Exponent: https://exp.host/@sungwoopark95/react-native-toi
 
-## Run it locally
+### Run it locally
 
 To install, there are two steps:
 

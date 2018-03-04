@@ -1,188 +1,142 @@
-import React from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { WebBrowser } from 'expo';
+import React, { Component } from "react";
+import { Text, Image, View, TouchableOpacity, StyleSheet } from "react-native";
+import { Agenda } from "react-native-calendars";
+import Colors from "../constants/Colors";
 
-import { MonoText } from '../components/StyledText';
-
-export default class HomeScreen extends React.Component {
+export default class HomeScreen extends Component {
   static navigationOptions = {
-    header: null,
+    header: null
   };
 
-  render() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      items: {}
+    };
+  }
+
+  renderHeader() {
     return (
-      <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-          <View style={styles.welcomeContainer}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingTop: 20,
+          paddingHorizontal: 12,
+          height: 64,
+          backgroundColor: "white",
+          borderBottomColor: "#7d7d7d",
+          borderBottomWidth: StyleSheet.hairlineWidth
+        }}
+      >
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate("DrawerToggle")}
+          >
             <Image
-              source={
-                __DEV__
-                  ? require('../assets/images/robot-dev.png')
-                  : require('../assets/images/robot-prod.png')
-              }
-              style={styles.welcomeImage}
+              style={{ width: 24, height: 24 }}
+              source={require("../assets/icons/icons8-menu.png")}
             />
-          </View>
-
-          <View style={styles.getStartedContainer}>
-            {this._maybeRenderDevelopmentModeWarning()}
-
-            <Text style={styles.getStartedText}>Get started by opening</Text>
-
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
-            </View>
-
-            <Text style={styles.getStartedText}>
-              Change this text and your app will automatically reload.
-            </Text>
-          </View>
-
-          <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-
-        <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
-
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
-          </View>
+          </TouchableOpacity>
         </View>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text>Calendar</Text>
+        </View>
+        <View style={{ flex: 1 }} />
       </View>
     );
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
+  render() {
+    return (
+      <View style={{ flex: 1 }}>
+        {this.renderHeader()}
+        <Agenda
+          items={this.state.items}
+          loadItemsForMonth={this.loadItems.bind(this)}
+          selected={"2018-03-04"}
+          renderItem={this.renderItem.bind(this)}
+          renderEmptyDate={this.renderEmptyDate.bind(this)}
+          rowHasChanged={this.rowHasChanged.bind(this)}
+          theme={{
+            dotColor: Colors.main,
+            selectedDotColor: "#ffffff",
+            selectedDayBackgroundColor: Colors.main,
+            agendaTodayColor: Colors.main,
+            todayTextColor: Colors.main
+          }}
+        />
+      </View>
+    );
   }
 
-  _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-  };
+  loadItems(day) {
+    setTimeout(() => {
+      for (let i = -15; i < 85; i++) {
+        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+        const strTime = this.timeToString(time);
+        if (!this.state.items[strTime]) {
+          this.state.items[strTime] = [];
+          const numItems = Math.floor(Math.random() * 5);
+          for (let j = 0; j < numItems; j++) {
+            this.state.items[strTime].push({
+              name: "Item for " + strTime,
+              height: Math.max(50, Math.floor(Math.random() * 150))
+            });
+          }
+        }
+      }
+      //console.log(this.state.items);
+      const newItems = {};
+      Object.keys(this.state.items).forEach(key => {
+        newItems[key] = this.state.items[key];
+      });
+      this.setState({
+        items: newItems
+      });
+    }, 1000);
+    // console.log(`Load Items for ${day.year}-${day.month}`);
+  }
 
-  _handleHelpPress = () => {
-    WebBrowser.openBrowserAsync(
-      'https://docs.expo.io/versions/latest/guides/up-and-running.html#can-t-see-your-changes'
+  renderItem(item) {
+    return (
+      <View style={[styles.item, { height: item.height }]}>
+        <Text>{item.name}</Text>
+      </View>
     );
-  };
+  }
+
+  renderEmptyDate() {
+    return (
+      <View style={styles.emptyDate}>
+        <Text>This is empty date!</Text>
+      </View>
+    );
+  }
+
+  rowHasChanged(r1, r2) {
+    return r1.name !== r2.name;
+  }
+
+  timeToString(time) {
+    const date = new Date(time);
+    return date.toISOString().split("T")[0];
+  }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  item: {
+    backgroundColor: "white",
     flex: 1,
-    backgroundColor: '#fff',
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 17
   },
-  developmentModeText: {
-    marginBottom: 20,
-    color: 'rgba(0,0,0,0.4)',
-    fontSize: 14,
-    lineHeight: 19,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingTop: 30,
-  },
-  welcomeContainer: {
-    alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  welcomeImage: {
-    width: 100,
-    height: 80,
-    resizeMode: 'contain',
-    marginTop: 3,
-    marginLeft: -10,
-  },
-  getStartedContainer: {
-    alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  homeScreenFilename: {
-    marginVertical: 7,
-  },
-  codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
-  },
-  codeHighlightContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 3,
-    paddingHorizontal: 4,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 20,
-      },
-    }),
-    alignItems: 'center',
-    backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
-  },
-  helpContainer: {
-    marginTop: 15,
-    alignItems: 'center',
-  },
-  helpLink: {
-    paddingVertical: 15,
-  },
-  helpLinkText: {
-    fontSize: 14,
-    color: '#2e78b7',
-  },
+  emptyDate: {
+    height: 15,
+    flex: 1,
+    paddingTop: 30
+  }
 });
