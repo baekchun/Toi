@@ -14,12 +14,11 @@
 
 ### Homescreen implemented
 
-![alt](../../screenshots/toi_login.gif)
+![alt](../../screenshots/home.png)
 
 ### Drawer menu implemented
 
-![alt](../../screenshots/toi_login.gif)
-
+![alt](../../screenshots/drawer.png)
 
 ## Installation
 
