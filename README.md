@@ -45,6 +45,14 @@ Baekchun Kim
 
 ### Week 3 - 4 (Due Mar. 6)
 
+1. Calendar implemented
+
+1. Drawer menu implemented
+
+1. Signup, login, logout working
+
+1. Implemented k-means clustering to find the most dominant colors in the image
+
 ### Week 5 - 6 (Due Mar. 27)
 
 ### Week 7 - 8 (Due Apr. 10)
