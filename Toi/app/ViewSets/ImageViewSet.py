@@ -16,9 +16,12 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
         save image from request
         """
+        serializer = ImageSerializer(data=request.data)
+
         if serializer.is_valid():
+            serializer.save()
             # store the image into the database
-            return Response(classified_result, status=201)
+            return Response("You have successfully stored the image on DB!", status=201)
         else:
         	# invalid request
             return Response(serializer.errors, status=400)
