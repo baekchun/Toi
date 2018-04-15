@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "0.0.0.0",
     "localhost",
-    "https://thawing-reef-43105.herokuapp.com/"
+    # "https://thawing-reef-43105.herokuapp.com/"
 ]
 
 
