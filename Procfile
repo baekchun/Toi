@@ -1,1 +1,1 @@
-web: gunicorn Toi.wsgi --log-file -
+web: python3 ./Toi/manage.py runserver "0.0.0.0:$PORT"
