@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
-    "https://toi123.herokuapp.com/",
+    "toi123.herokuapp.com",
 ]
 
 
