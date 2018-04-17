@@ -21,7 +21,10 @@ class ImageViewSet(viewsets.ModelViewSet):
         save image from request
         """
         serializer = ImageSerializer(data=request.data)
-        
+
+        # get user's IP address
+        self.get_IP_address(request)
+
         if serializer.is_valid():
             output_file = "../images/output.jpg"
 
@@ -50,7 +53,6 @@ class ImageViewSet(viewsets.ModelViewSet):
             
             message += "\n"
 
-
             print (message)
 
             # serializer.save()
@@ -59,3 +61,24 @@ class ImageViewSet(viewsets.ModelViewSet):
         else:
             # invalid request
             return Response(serializer.errors, status=400)
+
+    def get_IP_address(self, request):
+        """
+        get user's IP address
+        """
+
+        from ipware import get_client_ip
+        ip, is_routable = get_client_ip(request)
+
+        # Order of precedence is (Public, Private, Loopback, None)
+
+        if ip is None:
+           print ("Unable to get the client's IP address")
+        else:
+            # We got the client's IP address
+            if is_routable:
+                print ("Client's IP address is", ip)
+            else:
+                print ("Client's IP address is private")
+
+        
