@@ -5,16 +5,12 @@ import cv2
 import json
 import math
 
-import findContours
-
 CANNY_THRESH_1 = 20
 CANNY_THRESH_2 = 20
 
-def load():
+def load(image):
     # load the image
-    image = cv2.imread("images/stool_sample(1).jpg")
-    
-    return image
+    return cv2.imread(image)
 
 def crop(img):
     """
@@ -151,10 +147,10 @@ def plot_colors(hist, colors):
 
     return bar
 
-def main():
+def kmeans(img):
 
     # read image
-    image = load()
+    image = load(img)
 
     # crop the image around the stool
     image = crop(image)
@@ -189,16 +185,16 @@ def main():
     color_dist = {}
     for p, rgb in zip(hist, dominant_colors):
         color_dist[p] = rgb.tolist()
+    
+    return color_dist
 
-    print ("distribution:", json.dumps(color_dist, indent=4))
+    # bar = plot_colors(hist, dominant_colors)
 
-    bar = plot_colors(hist, dominant_colors)
-
-    plt.figure()
-    plt.axis("off")
-    plt.imshow(bar)
-    plt.show()
+    # plt.figure()
+    # plt.axis("off")
+    # plt.imshow(bar)
+    # plt.show()
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

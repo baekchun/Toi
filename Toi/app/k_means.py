@@ -1,20 +1,16 @@
 from sklearn.cluster import KMeans
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 import json
 import math
 
-import findContours
-
 CANNY_THRESH_1 = 20
 CANNY_THRESH_2 = 20
 
-def load():
+def load(image):
     # load the image
-    image = cv2.imread("images/stool_sample(1).jpg")
-    
-    return image
+    return cv2.imread(image)
 
 def crop(img):
     """
@@ -151,10 +147,10 @@ def plot_colors(hist, colors):
 
     return bar
 
-def main():
+def kmeans(img):
 
     # read image
-    image = load()
+    image = load(img)
 
     # crop the image around the stool
     image = crop(image)
@@ -189,16 +185,37 @@ def main():
     color_dist = {}
     for p, rgb in zip(hist, dominant_colors):
         color_dist[p] = rgb.tolist()
+    
+    return color_dist
 
-    print ("distribution:", json.dumps(color_dist, indent=4))
+    # bar = plot_colors(hist, dominant_colors)
 
-    bar = plot_colors(hist, dominant_colors)
+    # plt.figure()
+    # plt.axis("off")
+    # plt.imshow(bar)
+    # plt.show()
 
-    plt.figure()
-    plt.axis("off")
-    plt.imshow(bar)
-    plt.show()
+def get_color_names(rgb_query):
+    import webcolors
+    from scipy.spatial import KDTree
 
+    # lets populate some names into spatial name database
+    hexnames = webcolors.css3_hex_to_names
+    names = []
+    positions = []
 
-if __name__ == "__main__":
-    main()
+    for hex, name in hexnames.items():
+        names.append(name)
+        positions.append(webcolors.hex_to_rgb(hex))
+
+    spacedb = KDTree(positions)
+
+    # query nearest point
+    dist, index = spacedb.query(rgb_query)
+
+    print('The color %r is closest to %s.'%(rgb_query, names[index]))
+
+    return names[index]
+
+# if __name__ == "__main__":
+#     main()

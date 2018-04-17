@@ -5,4 +5,9 @@ psycopg2==2.7.3.2
 dj_database_url==0.4.2
 gunicorn==19.7.1
 postgres==2.2.1
+webcolors==1.8.1
+scikit-learn==0.19.1
+numpy==1.12.1
+cv2==3.3.0
+scipy==1.0.0
 django-rest-auth
