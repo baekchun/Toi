@@ -8,6 +8,6 @@ postgres==2.2.1
 webcolors==1.8.1
 scikit-learn==0.19.1
 numpy==1.12.1
-cv2==3.3.0
+opencv-python==3.4.0.12
 scipy==1.0.0
 django-rest-auth
