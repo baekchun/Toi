@@ -1,4 +1,5 @@
 from ..k_means import kmeans, get_color_names
+from ..countBlobs import get_type, count_blobs
 from ..models import Image
 from ..serializers import ImageSerializer
 from rest_framework import viewsets
@@ -24,6 +25,12 @@ class ImageViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             output_file = "../images/output.jpg"
 
+            # get the type of stool based on Bristol Stool Chart
+            count = count_blobs(output_file)
+            stool_type = get_type(count)
+            message = ""
+            message += stool_type + " with color distribution of "
+
             # convert binary string into a base64 image
             with open(output_file, "wb") as f:
                 f.write(base64.b64decode(serializer.data["bytes"]))
@@ -37,10 +44,13 @@ class ImageViewSet(viewsets.ModelViewSet):
                 color_name = get_color_names(query)
                 results[color_name] = percentage
 
-            message = ""
+
             for k, v in results.items():
                 message += " " + str(int(v * 100)) + "% of " + k + ",  "
             
+            message += "\n"
+
+
             print (message)
 
             # serializer.save()
