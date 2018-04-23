@@ -166,7 +166,7 @@ def kmeans(img):
     image = image.reshape((image.shape[0] * image.shape[1], 3))
 
     # Instantiate a k_means clustering object with 5 clusters
-    k_means = KMeans(n_clusters = 4)
+    k_means = KMeans(n_clusters = 5)
 
     # Cluster colors (one 3D color vector per pixel) into 5 clusters
     # based on the euclidean distance between the colors 

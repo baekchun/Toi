@@ -22,9 +22,6 @@ class ImageViewSet(viewsets.ModelViewSet):
         """
         serializer = ImageSerializer(data=request.data)
 
-        # get user's IP address
-        self.get_IP_address(request)
-
         if serializer.is_valid():
             output_file = "../images/output.jpg"
 
@@ -41,17 +38,41 @@ class ImageViewSet(viewsets.ModelViewSet):
             # get color distribution from k_means clustering
             color_dist = kmeans(output_file)
 
+            additional_msg = ""
             results = {}
+            blood_colors = set(["maroon", "red"])
+            mucus_colors = set([])
+            contains_blood = False
+            contains_mucus = False
+
+            # identify the color name based on the RGB values
             for percentage, rgb in color_dist.items():
                 query = ((int(rgb[0]), int(rgb[1]), int(rgb[2])))
                 color_name = get_color_names(query)
+
+                # check if blood color is found in your stool
+                if color_name in blood_colors:
+                    contains_blood = True
+
+                if color_name in mucus_colors:
+                    contains_mucus = True
+
                 results[color_name] = percentage
 
-
+            # add the percentage of each color distribution to the response msg
             for k, v in results.items():
                 message += " " + str(int(v * 100)) + "% of " + k + ",  "
             
-            message += "\n"
+            if contains_blood:
+                message += "\n" + " Blood found in your stool"
+            else:
+                message += "\n" + " No blood found"
+
+            if contains_mucus:
+                message += "\n" + " Mucus found in your stool"
+            else:
+                message += "\n" + " No mucus found"
+
 
             print (message)
 
@@ -62,23 +83,23 @@ class ImageViewSet(viewsets.ModelViewSet):
             # invalid request
             return Response(serializer.errors, status=400)
 
-    def get_IP_address(self, request):
-        """
-        get user's IP address
-        """
+    # def get_IP_address(self, request):
+    #     """
+    #     get user's IP address
+    #     """
 
-        from ipware import get_client_ip
-        ip, is_routable = get_client_ip(request)
+    #     from ipware import get_client_ip
+    #     ip, is_routable = get_client_ip(request)
 
-        # Order of precedence is (Public, Private, Loopback, None)
+    #     # Order of precedence is (Public, Private, Loopback, None)
 
-        if ip is None:
-           print ("Unable to get the client's IP address")
-        else:
-            # We got the client's IP address
-            if is_routable:
-                print ("Client's IP address is", ip)
-            else:
-                print ("Client's IP address is private")
+    #     if ip is None:
+    #        print ("Unable to get the client's IP address")
+    #     else:
+    #         # We got the client's IP address
+    #         if is_routable:
+    #             print ("Client's IP address is", ip)
+    #         else:
+    #             print ("Client's IP address is private")
 
-        
+    #     
