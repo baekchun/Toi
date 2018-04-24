@@ -73,7 +73,7 @@ export default class PoopDetail extends Component {
     super(props);
     this.state = {
       opacity: new Animated.Value(1),
-      type: props.navigation.state.params.type
+      ...props.navigation.state.params.data
     };
   }
 
@@ -82,61 +82,70 @@ export default class PoopDetail extends Component {
   }
 
   renderWarning() {
-    return (
-      <View
-        style={{
-          padding: 16,
-          marginHorizontal: 16,
-          marginVertical: 8,
-          backgroundColor: "white",
-          borderRadius: 8
-        }}
-      >
-        <Text style={{ fontWeight: "700", color: "#F44336" }}>Warning</Text>
+    const { contains_blood, contains_mucus } = this.state;
+    if (contains_blood || contains_mucus) {
+      return (
         <View
           style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginTop: 16
+            padding: 16,
+            marginHorizontal: 16,
+            marginVertical: 8,
+            backgroundColor: "white",
+            borderRadius: 8
           }}
         >
-          <View style={{ alignItems: "center", marginHorizontal: 8 }}>
-            <Image
-              style={{ width: 48, height: 48 }}
-              source={require("../assets/icons/icons8-drop_of_blood.png")}
-            />
-            <Text style={{ color: "gray", marginTop: 8, fontSize: 12 }}>
-              Blood Found
-            </Text>
-          </View>
-          <View style={{ alignItems: "center", marginHorizontal: 8 }}>
-            <Image
-              style={{ width: 48, height: 48 }}
-              source={require("../assets/icons/icons8-booger.png")}
-            />
-            <Text style={{ color: "gray", marginTop: 8, fontSize: 12 }}>
-              Mucus Found
-            </Text>
+          <Text style={{ fontWeight: "700", color: "#F44336" }}>Warning</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              marginTop: 16
+            }}
+          >
+            {contains_blood && (
+              <View style={{ alignItems: "center", marginHorizontal: 8 }}>
+                <Image
+                  style={{ width: 48, height: 48 }}
+                  source={require("../assets/icons/icons8-drop_of_blood.png")}
+                />
+                <Text style={{ color: "gray", marginTop: 8, fontSize: 12 }}>
+                  Blood Found
+                </Text>
+              </View>
+            )}
+            {contains_mucus && (
+              <View style={{ alignItems: "center", marginHorizontal: 8 }}>
+                <Image
+                  style={{ width: 48, height: 48 }}
+                  source={require("../assets/icons/icons8-booger.png")}
+                />
+                <Text style={{ color: "gray", marginTop: 8, fontSize: 12 }}>
+                  Mucus Found
+                </Text>
+              </View>
+            )}
           </View>
         </View>
-      </View>
-    );
+      );
+    }
   }
 
   renderInfo() {
-    const { type } = this.state;
+    const { bristol_type, date } = this.state;
     return (
       <View style={{ padding: 16 }}>
         <Text style={{ fontSize: 24, fontWeight: "600" }}>
-          Stool Type {type}
+          Stool Type {bristol_type}
         </Text>
-        <Text style={{ color: "gray" }}>{moment().format("MMM Do YY")}</Text>
+        <Text style={{ color: "gray" }}>
+          {moment(date).format("MMM Do YY")}
+        </Text>
       </View>
     );
   }
 
   renderChart() {
-    const { type } = this.state;
+    const { bristol_type } = this.state;
     return (
       <View
         style={{
@@ -152,7 +161,7 @@ export default class PoopDetail extends Component {
         {POOPS.map((p, i) => {
           let extraView = {};
           let extraText = {};
-          if (i == type - 1) {
+          if (i == bristol_type - 1) {
             extraView = {
               backgroundColor: Colors.main,
               borderRadius: 40,
@@ -175,7 +184,7 @@ export default class PoopDetail extends Component {
 
   renderRecommendation() {
     //debug
-    const { type } = this.state;
+    const { bristol_type } = this.state;
     return (
       <View
         style={{
@@ -187,7 +196,7 @@ export default class PoopDetail extends Component {
         }}
       >
         <View style={{ flexDirection: "row", alignSelf: "center" }}>
-          {POOP_DETAIL[type].images.map((image, i) => (
+          {POOP_DETAIL[bristol_type].images.map((image, i) => (
             <Image
               key={i}
               style={{ width: 36, height: 36, marginHorizontal: 4 }}
@@ -196,14 +205,14 @@ export default class PoopDetail extends Component {
           ))}
         </View>
         <Text style={{ color: "#7d7d7d", fontSize: 12, marginTop: 16 }}>
-          {POOP_DETAIL[type].description}
+          {POOP_DETAIL[bristol_type].description}
         </Text>
       </View>
     );
   }
 
   renderPreview() {
-    const { opacity, type } = this.state;
+    const { opacity, bristol_type } = this.state;
     return (
       <TouchableWithoutFeedback
         onPress={() => this.reveal()}
@@ -213,7 +222,7 @@ export default class PoopDetail extends Component {
           <Image
             style={styles.image}
             resizeMode={"contain"}
-            source={require("../assets/poops/poopmoji.png")}
+            source={require("../assets/poops/blood.jpeg")}
           />
           <Animated.View
             style={[
@@ -241,6 +250,50 @@ export default class PoopDetail extends Component {
       </TouchableWithoutFeedback>
     );
   }
+
+  renderBar() {
+    const { bar_chart, color_distribution } = this.state;
+    const b64 = `data:image/png;base64,${bar_chart}`;
+    const obj = JSON.parse(color_distribution);
+    return (
+      <View
+        style={{
+          padding: 16,
+          marginHorizontal: 16,
+          marginVertical: 8,
+          backgroundColor: "white",
+          borderRadius: 8,
+          justifyContent: "center"
+        }}
+      >
+        <Image
+          resizeMode={"contain"}
+          style={{ height: 50, width: width - 64 }}
+          source={{ uri: b64 }}
+        />
+
+        <View style={{ marginVertical: 16, paddingHorizontal: 64 }}>
+          {Object.keys(obj).map((o, i) => {
+            return (
+              <View
+                key={i}
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between"
+                }}
+              >
+                <Text style={{ fontWeight: "600" }}>{o}</Text>
+                <Text style={{ color: "gray" }}>
+                  {Number(obj[o]).toFixed(3)}%
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+      </View>
+    );
+  }
+
   render() {
     return (
       <ScrollView style={{ flex: 1 }}>
@@ -248,6 +301,7 @@ export default class PoopDetail extends Component {
         {this.renderWarning()}
         {this.renderChart()}
         {this.renderRecommendation()}
+        {this.renderBar()}
         {this.renderPreview()}
       </ScrollView>
     );
