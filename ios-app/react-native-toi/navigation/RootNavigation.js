@@ -6,23 +6,21 @@ import MainTabNavigator from "./MainTabNavigator";
 import DrawerNavigator from "./DrawerNavigation";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
+import PoopScreen from "../screens/PoopDetail";
 import registerForPushNotificationsAsync from "../api/registerForPushNotificationsAsync";
 
-const RootStackNavigator = StackNavigator(
-  {
-    Main: {
-      screen: LoginScreen
-    },
-    Home: {
-      screen: DrawerNavigator
-    }
+const RootStackNavigator = StackNavigator({
+  Main: {
+    // screen: PoopScreen
+    screen: LoginScreen
   },
-  {
-    navigationOptions: () => ({
-      header: null
-    })
+  Home: {
+    screen: DrawerNavigator
+  },
+  Poop: {
+    screen: PoopScreen
   }
-);
+});
 
 export default class RootNavigator extends React.Component {
   componentDidMount() {

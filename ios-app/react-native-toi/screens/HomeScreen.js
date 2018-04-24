@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Text, Image, View, TouchableOpacity, StyleSheet } from "react-native";
 import { Agenda } from "react-native-calendars";
 import Colors from "../constants/Colors";
+import { PoopItem } from "../components";
 
 export default class HomeScreen extends Component {
   static navigationOptions = {
@@ -81,8 +82,7 @@ export default class HomeScreen extends Component {
           const numItems = Math.floor(Math.random() * 5);
           for (let j = 0; j < numItems; j++) {
             this.state.items[strTime].push({
-              name: "Item for " + strTime,
-              height: Math.max(50, Math.floor(Math.random() * 150))
+              name: "Item for " + strTime
             });
           }
         }
@@ -96,13 +96,14 @@ export default class HomeScreen extends Component {
         items: newItems
       });
     }, 1000);
-    // console.log(`Load Items for ${day.year}-${day.month}`);
   }
 
   renderItem(item) {
     return (
-      <View style={[styles.item, { height: item.height }]}>
-        <Text>{item.name}</Text>
+      <View style={[styles.item]}>
+        <PoopItem
+          onPress={type => this.props.navigation.navigate("Poop", { type })}
+        />
       </View>
     );
   }
@@ -110,7 +111,7 @@ export default class HomeScreen extends Component {
   renderEmptyDate() {
     return (
       <View style={styles.emptyDate}>
-        <Text>This is empty date!</Text>
+        <Text style={{ color: "#7d7d7d" }}>No data to display</Text>
       </View>
     );
   }
@@ -126,17 +127,9 @@ export default class HomeScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-  item: {
-    backgroundColor: "white",
-    flex: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,
-    marginTop: 17
-  },
   emptyDate: {
     height: 15,
     flex: 1,
-    paddingTop: 30
+    paddingTop: 44
   }
 });
