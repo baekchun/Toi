@@ -3,12 +3,15 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.forms import inlineformset_factory
 from django.utils.datastructures import MultiValueDictKeyError
+# from ..models import UserProfile
+from ..serializers import UserSerializer #, UserProfileSerializer
 from rest_framework.decorators import detail_route, list_route
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
+import logging
 from django.utils.timezone import datetime, now, timedelta, utc
 
 
@@ -16,6 +19,7 @@ class UserViewSet(viewsets.ViewSet):
     """
     A simple ViewSet for listing or retrieving users.
     """
+    logger = logging.getLogger(__name__)
 
     @list_route(methods=['post'], url_path='register')
     def user_register(self, request):
@@ -56,9 +60,8 @@ class UserViewSet(viewsets.ViewSet):
             except Token.DoesNotExist:
                 raise AuthenticationFailed('Invalid token')
             return Response(token_request, status=200)
-        else:
-            return Response({"message": "Invalid Login Information"}, status=400)
-
+        else:                                         # if not registered
+            return Response({"message": "Invalid Login Information"}, status=400) # not authenticated
 
     @list_route(methods=['post'], url_path='auth')
     def authenticate_token(self, request):

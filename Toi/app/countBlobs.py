@@ -4,9 +4,9 @@ import cv2
 
 def get_type(count):
 	if count < 10:
-		return "Type II"
+		return "2"
 	elif count > 10:
-		return "Type I" 
+		return "1" 
 	else:
 		return "None found"
 
