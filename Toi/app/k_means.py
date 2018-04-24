@@ -1,5 +1,6 @@
 from sklearn.cluster import KMeans
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+
 import numpy as np
 import cv2
 import json
@@ -47,7 +48,7 @@ def crop(img):
     region_of_interest = img[y:y + height, x:x + width]
     cv2.imwrite("images/cropped.jpg", region_of_interest)
     return region_of_interest
-    
+
 
 def saturate(matrix, v_min, v_max):
     """
@@ -89,14 +90,11 @@ def color_balance(img, saturation_level):
 
         # get the number of columns of flattened vector
         columns = len(flattened)
-        
+
         # find lower and upper bound that correspond to our desired saturation level 
         # v_min and v_max are essentially the saturation extrema
-        v_min  = flattened[math.floor(columns * saturation_level)]
+        v_min = flattened[math.floor(columns * saturation_level)]
         v_max = flattened[math.ceil(columns * (1.0 - saturation_level) - 1)]
-
-        print ("v_min: ", v_min)
-        print ("v_max: ", v_max)
 
         # saturate the pixels based on the quantiles of the pixel values distribution
         saturated = saturate(channel, v_min, v_max)
@@ -137,13 +135,10 @@ def plot_colors(hist, colors):
             (int(startX), 0),
             (int(endX), 50),
             # set pixels in uint8: [0, 255]
-            color.astype("uint8").tolist(), 
+            color.astype("uint8").tolist(),
             -1
         )
         startX = endX
-    
-    # return the bar chart
-    print ("bar", bar, bar.shape)
 
     return bar
 
@@ -175,25 +170,22 @@ def kmeans(img):
     # get the most dominant colors found in the image
     dominant_colors = k_means.cluster_centers_
 
-    print (dominant_colors)
-
     # create a histogram with each color bar representing the color and its
     # frequency in the given image
     hist = create_histogram(k_means)
+
+    # plot a bar chart with color distribution
+    bar = plot_colors(hist, dominant_colors)
+
+    # cv2.imwrite('bar_chart.png', bar)
 
     # create a dictionary of probability mapped to the dominant RGB values
     color_dist = {}
     for p, rgb in zip(hist, dominant_colors):
         color_dist[p] = rgb.tolist()
     
-    return color_dist
+    return color_dist, bar
 
-    # bar = plot_colors(hist, dominant_colors)
-
-    # plt.figure()
-    # plt.axis("off")
-    # plt.imshow(bar)
-    # plt.show()
 
 def get_color_names(rgb_query):
     import webcolors
@@ -212,8 +204,6 @@ def get_color_names(rgb_query):
 
     # query nearest point
     dist, index = spacedb.query(rgb_query)
-
-    print('The color %r is closest to %s.'%(rgb_query, names[index]))
 
     return names[index]
 

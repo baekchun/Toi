@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "localhost",
     "toi123.herokuapp.com",
-    "09db0fa8.ngrok.io"
+    "cba2b742.ngrok.io"
 ]
 
 
