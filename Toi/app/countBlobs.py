@@ -3,11 +3,14 @@ import cv2
 # img = cv2.imread('images/blood_in_stool_sample(2).jpg')
 
 def get_type(count):
+
 	if count < 10:
 		return "2"
 	elif count > 10:
 		return "1" 
 	else:
+		# more work needed here to get the type based on the
+		# blob count
 		return "None found"
 
 def count_blobs(image):
@@ -34,7 +37,6 @@ def count_blobs(image):
 	        cv2.contourArea(cnt),
 	    ))
 
-	# contour_info = sorted(contour_info, key=lambda x: x[2], reverse=True)
 	count = 0
 	
 	# set the minimum contour area
@@ -48,11 +50,3 @@ def count_blobs(image):
 			count += 1
 
 	return count
-
-# print (count)
-# print (cv2.arcLength(contour_info[-1][0], True))
-# print (len(contours))
-# cv2.namedWindow("img", 0)
-# cv2.imshow('img', img)
-# cv2.resizeWindow('img', 600,600)
-# cv2.waitKey(5000)

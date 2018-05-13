@@ -36,28 +36,25 @@ class ImageViewSet(viewsets.ModelViewSet):
             # run analysis and get all the details about the poop
             color_dist, bar, color_dict, contains_blood, contains_mucus = self.get_stool_details(output_file)
 
-
-            # get user profile object of the API caller
-            user_profile = self.get_user_profile_object(request)
-
             # write the bar chart image 
-            cv2.imwrite('bar_chart.png', bar)
+            cv2.imwrite('bar_chart.png', cv2.cvtColor(bar, cv2.COLOR_RGB2BGR))  
+
+            # firebase config
+            config = {
+                "apiKey": "YOUR_API_KEY",
+                "authDomain": "YOUR_AUTH_DOMAIN",
+                "databaseURL": "YOUR_DATABASE_URL",
+                "storageBucket": "YOUR_STORAGE_BUCKET",
+            }
 
             # convert the image into string
             with open('bar_chart.png', "rb") as f:
                 encoded_string = base64.b64encode(f.read())
 
-            # encoded_string = encoded_string.decode('ascii')
+            encoded_string = encoded_string.decode('ascii')
             
-            # firebase config
-            config = {
-                "apiKey": "AIzaSyBxl_Hn9MFnAIodQAYYUveqE5X7XAgns_0",
-                "authDomain": "csie-toi.firebaseapp.com",
-                "databaseURL": "https://csie-toi.firebaseio.com",
-                "storageBucket": "csie-toi.appspot.com",
-            }
 
-            # the actual data that gets sent to firebasea
+            # the actual data that gets sent to Firebase
             data = {
                 "bristol_type": get_type(count_blobs(output_file)),
                 "date": serializer.data["taken_on"],
@@ -66,10 +63,10 @@ class ImageViewSet(viewsets.ModelViewSet):
                 "color_distribution": json.dumps(color_dict),
                 "bar_chart": encoded_string 
             }
-            print (data)
-            # firebase = pyrebase.initialize_app(config)
-            # db = firebase.database()
-            # db.child("stools").push(data)
+
+            firebase = pyrebase.initialize_app(config)
+            db = firebase.database()
+            db.child("stools").push(data)
 
             # store the image into the database
             return Response("SUCCESS", status=201)
@@ -84,7 +81,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         color_dict = {}
 
         blood_colors = set(["maroon", "red"])
-        mucus_colors = set([])
+        mucus_colors = set([]) # more work needed here
 
         contains_blood = False
         contains_mucus = False
