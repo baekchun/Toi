@@ -4,6 +4,9 @@ import { Agenda } from "react-native-calendars";
 import Colors from "../constants/Colors";
 import { PoopItem } from "../components";
 
+import firebase from "firebase";
+import moment from "moment";
+
 export default class HomeScreen extends Component {
   static navigationOptions = {
     header: null
@@ -56,7 +59,7 @@ export default class HomeScreen extends Component {
         <Agenda
           items={this.state.items}
           loadItemsForMonth={this.loadItems.bind(this)}
-          selected={"2018-03-04"}
+          selected={moment().format("YYYY-MM-DD")}
           renderItem={this.renderItem.bind(this)}
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
@@ -73,36 +76,96 @@ export default class HomeScreen extends Component {
   }
 
   loadItems(day) {
-    setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = this.timeToString(time);
-        if (!this.state.items[strTime]) {
-          this.state.items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 5);
-          for (let j = 0; j < numItems; j++) {
-            this.state.items[strTime].push({
-              name: "Item for " + strTime
-            });
+    console.log("loading data");
+    // this.randomGeneration(day);
+    firebase
+      .database()
+      .ref("stools")
+      .on("value", snapshot => {
+        const data = snapshot.val();
+        console.log("data came in");
+        console.log(data);
+
+        this.state.items = {};
+        Object.keys(data).map(d => {
+          console.log(data[d]);
+          const strTime = this.timeToString(data[d].date);
+          if (!this.state.items[strTime]) {
+            this.state.items[strTime] = [];
           }
+          this.state.items[strTime].push(data[d]);
+        });
+
+        const newItems = {};
+        Object.keys(this.state.items).forEach(key => {
+          newItems[key] = this.state.items[key];
+        });
+        this.setState({
+          items: newItems
+        });
+
+        if (data == null) {
+          console.log("no data");
+          this.setState({ items: { 1: "hello" } });
+          // this.randomGeneration(day);
+        }
+      });
+
+    // setTimeout(() => {
+    //   for (let i = -15; i < 85; i++) {
+    //     const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+    //     const strTime = this.timeToString(time);
+    //     if (!this.state.items[strTime]) {
+    //       this.state.items[strTime] = [];
+    //       const numItems = Math.floor(Math.random() * 5);
+    //       for (let j = 0; j < numItems; j++) {
+    //         this.state.items[strTime].push({
+    //           name: "Item for " + strTime
+    //         });
+    //       }
+    //     }
+    //   }
+    //   //console.log(this.state.items);
+    //   const newItems = {};
+    //   Object.keys(this.state.items).forEach(key => {
+    //     newItems[key] = this.state.items[key];
+    //   });
+    //   this.setState({
+    //     items: newItems
+    //   });
+    // }, 1000);
+  }
+
+  randomGeneration(day) {
+    for (let i = -15; i < 85; i++) {
+      const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+      const strTime = this.timeToString(time);
+      if (!this.state.items[strTime]) {
+        this.state.items[strTime] = [];
+        const numItems = Math.floor(Math.random() * 5);
+        for (let j = 0; j < numItems; j++) {
+          this.state.items[strTime].push({
+            name: "Item for " + strTime
+          });
         }
       }
-      //console.log(this.state.items);
-      const newItems = {};
-      Object.keys(this.state.items).forEach(key => {
-        newItems[key] = this.state.items[key];
-      });
-      this.setState({
-        items: newItems
-      });
-    }, 1000);
+    }
+    //console.log(this.state.items);
+    const newItems = {};
+    Object.keys(this.state.items).forEach(key => {
+      newItems[key] = this.state.items[key];
+    });
+    this.setState({
+      items: newItems
+    });
   }
 
   renderItem(item) {
     return (
       <View style={[styles.item]}>
         <PoopItem
-          onPress={type => this.props.navigation.navigate("Poop", { type })}
+          data={item}
+          onPress={data => this.props.navigation.navigate("Poop", { data })}
         />
       </View>
     );

@@ -13,18 +13,27 @@ const POOPS = {
 };
 
 export default class PoopItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: props.data
+    };
+  }
   render() {
-    const type = Math.floor(Math.random() * 7) + 1;
+    const { data } = this.state;
+    console.log(data);
+    const { bristol_type, date } = data;
+    const type = bristol_type;
     return (
       <TouchableOpacity
-        onPress={() => this.props.onPress(type)}
+        onPress={() => this.props.onPress(data)}
         style={[styles.item, { flexDirection: "row", alignItems: "center" }]}
       >
         <Image style={{ width: 24, height: 24 }} source={POOPS[type]} />
         <View style={{ paddingLeft: 8 }}>
           <Text>Type {type}</Text>
           <Text style={{ fontSize: 12, color: "gray" }}>
-            {moment().format("MMM Do YY")}
+            {moment(date).format("MMM Do YY h:mm:ss a")}
           </Text>
         </View>
       </TouchableOpacity>

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
+    "base-64": "^0.1.0",
     "expo": "^25.0.0",
     "firebase": "^4.10.1",
     "moment": "^2.22.1",
